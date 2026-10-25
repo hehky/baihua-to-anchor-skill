@@ -1,125 +1,140 @@
-# 白话转锚点 · 高效输入（baihua-to-anchor）v3.0.0
+# baihua-to-anchor · Plain Words to Anchors (v3.0.0)
 
-> 说人话提需求，模型自动整理成结构清楚的工程指令：删掉废话、一字不改技术细节、把"它替你猜的部分"单独标出来，再动手执行。
+[English](#english) · [简体中文](#简体中文)
 
-## 1. 技能定位
+> Describe an engineering task in everyday words. The model turns it into a clean, line-by-line instruction block: filler removed, technical details kept character for character, and anything it had to guess clearly marked for your approval before it acts.
 
-写给 AI 的工程需求，往往夹着口水词、顺序乱、关键信息散落在一句话里，模型容易漏条件、改原话、擅自替你做决定。
+<a id="english"></a>
 
-白话转锚点是一个 Skill：你照常用白话说任务，模型先把它转写成《符号指令解析规范 v5.2》的锚点格式（一行一个意图），再按转写结果执行。
+## What it is
 
-- **不改原话**：只删没有信息量的词，其余一字不动。
-- **技术片段零损失**：代码、路径、URL、命令、报错原文、数字逐字保留。
-- **否定不丢不反转**："别重启""不要动数据库"一定保留原意。
-- **代推透明**：凡是你没说、模型自己补的步骤或默认项，全部单独标注，等你确认。
+Requests written to an AI coding assistant are often messy: filler words, jumbled order, key conditions buried mid-sentence. Models then miss constraints, rewrite what you said, or quietly decide things for you.
 
-## 2. 触发条件
+baihua-to-anchor is a Skill. You keep talking normally; the model first transcribes your request into **anchor format** (one intent per line, each line starting with a one-letter anchor), then works from that transcription.
 
-- 用户用白话提出工程任务（排障、部署、配置、重构、脚本、开发），且**行首没有锚点**时自动触发，无需显式调用。
-- 行首已经写了锚点（如 `x:` `y:`），视为用户自己写好了，不再转写。
-- 同一任务首次转写后进入"会话锁"，后续补充消息直接转写；说"好了/谢谢"等结束语即解锁。
+- **Your words stay yours**: only filler from the lexicon is removed; nothing else is reworded.
+- **Zero loss on technical fragments**: code, paths, URLs, commands, error messages and numbers are kept verbatim.
+- **Negations never dropped or flipped**: "don't restart" and "never touch the database" always survive.
+- **Transparent inference**: every step or default the model added on its own is labeled and waits for your confirmation.
 
-## 3. 执行流程
+> Current version processes requests written in Chinese. The rules themselves are language-independent.
 
-1. 读词库 `lexicon.json`（校验版本）
-2. 判场景：`/排障` `/部署` `/配置` `/重构` `/脚本` `/开发`，只看"要我做的那件事"
-3. 切子句，每个子句只归一个锚点（点名的技术名另抄进 `h:`）
-4. 清洗：只允许五种改写（删词库里的口水词等）
-5. 补默认项与代推，并标注
-6. 按自查清单逐项过
-7. 输出转写块 + 代推项 + 学习结算行 + 一句随附话，再执行
+## When it triggers
 
-## 4. 核心规则与校验
+- Automatically, when you describe an engineering task (debug, deploy, config, refactor, script, dev) in plain words **without** a line-start anchor.
+- If a line already starts with an anchor (`x:`, `y:` …), you wrote the structure yourself, so it is not transcribed.
+- After the first transcription a **session lock** keeps follow-up messages in the same task; a closing message ("done", "thanks") releases it.
 
-- **硬规则（逐字执行）**：行首锚点判定、否定不丢不反转、技术片段逐字保留、输出格式与行序、学习防污染。
-- **语义优先**：场景、症状（系统是不是坏了）、风险判定以语义为准，词库只是种子示例和平局提示。
-- **"系统已坏"判定**：区分真实故障、功能名（"异常检测功能"）和坏味道（"代码太乱"不等于报错）。
-- **拿不准时更保守**：不删、不推、多问一句；但能从项目本身推断的默认（语言、现有框架）不打断用户。
+## How it works
 
-## 5. 输出规范
+1. Load `lexicon.json` (version-checked).
+2. Pick the scene from what you asked it to *do*: `/排障` debug · `/部署` deploy · `/配置` config · `/重构` refactor · `/脚本` script · `/开发` dev.
+3. Split into clauses; each clause goes to exactly one anchor (named technologies are also copied to `h:`).
+4. Clean: only five kinds of edits are allowed (e.g. deleting lexicon filler).
+5. Add defaults and inferences, each labeled.
+6. Run the self-check list.
+7. Output the anchor block + inferred items + learning line + one follow-up sentence, then execute.
 
-输出锚点共 8 个：
+## Output anchors
 
-| 锚点 | 含义 |
+| Anchor | Meaning |
 |---|---|
-| `z:` | 症状、报错原文、现状、坏味道 |
-| `i:` | 要达到的结果状态（没说则补场景默认并标注） |
-| `x:` | 要做的动作（没有动作才代推并标注） |
-| `o:` | 用户点名要的产物 |
-| `h:` | 点名的语言、版本、系统、框架、数据库、工具 |
-| `y:` | 红线与限制，一条不丢 |
-| `q:` | 独立的强调子句 |
-| `j:` | 回复的呈现形式 |
+| `z:` | Symptom, error text, current state, code smell |
+| `i:` | Target end state (scene default added and labeled if you gave none) |
+| `x:` | Action to take (inferred and labeled only when you gave none) |
+| `o:` | Deliverable you explicitly asked for |
+| `h:` | Named language, version, OS, framework, database, tool |
+| `y:` | Red lines and limits, never dropped |
+| `q:` | Standalone emphasis |
+| `j:` | How the reply should be presented |
 
-行序固定：`/场景 → z → i → x → o → h → y → q → j`，空锚点不写。
+Fixed order: `/scene → z → i → x → o → h → y → q → j`. Empty anchors are omitted.
 
-示例输入：
+**Example** — input: `npm run dev 报 port 3000 already in use，帮我搞一下` ("npm run dev says port 3000 already in use, sort it out")
 
 ```
-npm run dev 报 port 3000 already in use，帮我搞一下
+/排障
+z:npm run dev 报 port 3000 already in use
+i:问题消除，功能恢复正常（默认）
+x:定位并修复 npm run dev 报 port 3000 already in use（代推：由症状代推）
+y:不改动无关的代码和配置（默认，可删）
 ```
 
-模型先输出场景标签与锚点转写、标出代推项，再用一句话确认或直接执行。
+The error text is kept verbatim, the filler "帮我搞一下" is gone, and the inferred action is labeled `代推` (inferred) for you to confirm.
 
-## 6. 参数与文件说明
+## Hard rules vs. judgment
+
+- **Hard rules (applied literally)**: line-start anchor detection, negation preserved, technical fragments verbatim, output format and order, learning-layer anti-pollution.
+- **Semantics first**: scene, "is the system actually broken", and risk are judged by meaning; the lexicon is seed examples and a tie-breaker.
+- **When unsure, be conservative**: don't delete, don't infer, ask one question. Defaults inferable from the project (language, existing framework) don't interrupt you.
+
+## Files
 
 ```
 baihua-to-anchor/
-├── SKILL.md              唯一规则（17 节：总原则、术语表、场景决策链、锚点细则、22 组示例、自查清单、学习等）
-├── lexicon.json          词库（schema_version=3），种子层 + 学习层
-├── scripts/learn.py      词库学习工具：add / correct / reject / remove / list / active / prune
-├── README.md             包内说明
+├── SKILL.md              The single rule set (17 sections: principles, glossary, scene chain, anchor rules, 22 examples, self-check, learning…)
+├── lexicon.json          Lexicon (schema_version=3): seed layer + learning layer
+├── scripts/learn.py      Lexicon tool: add / correct / reject / remove / list / active / prune
+├── README.md             In-package notes
 └── tests/
-    ├── test_transcribe.py  输出校验器 + 回归（639 项断言）
-    ├── test_learn.py       learn.py 回归（114 项断言）
-    └── cases.jsonl         245 条合格样本 + 51 条故意错误的反例
+    ├── test_transcribe.py  Output validator + regression (639 assertions)
+    ├── test_learn.py       learn.py regression (114 assertions)
+    └── cases.txt           245 passing samples + 51 deliberately broken counter-examples
 ```
 
-## 7. 配置与运行环境
+## Install & run
 
-- 任何支持 Skill 目录的 AI 编程工具：把 `baihua-to-anchor/` 整个复制到 skill 库目录即可。
+- Any AI coding tool that supports Skill directories: copy the whole folder into your skills directory.
   ```bash
-  cp -r baihua-to-anchor <skill库目录>/
+  cp -r baihua-to-anchor <your-skills-dir>/
   ```
-- 学习工具与测试需要 Python 3，无第三方依赖。
-- 词库维护示例：
+- Learning tool and tests need Python 3, no third-party dependencies.
   ```bash
+  cd baihua-to-anchor
+  python3 tests/test_transcribe.py   # 639 assertions
+  python3 tests/test_learn.py        # 114 assertions
   python3 scripts/learn.py add colloquial --text "劳驾" --category 客套
-  python3 scripts/learn.py add scene-trigger --text "炸了" --scene 排障
   python3 scripts/learn.py active
   ```
 
-## 8. 能力边界
+## Limits
 
-- 只处理**工程任务**；闲聊、非技术问题不触发。
-- 校验器只查硬性不变量（标签、锚点合法与行序、技术片段保留、否定保留、必填锚点等）；场景选得对不对、归属是否最优，仍需人工或盲测对照判断。
-- 学习层词条至少出现 2 次才生效，单次只作候选，防止误学。
-- 不替用户做决定：涉及风险的操作先征询。
+- Engineering tasks only; chit-chat and non-technical questions don't trigger.
+- The validator checks hard invariants only (labels, anchor legality and order, verbatim fragments, negation, required anchors…). Whether the scene or clause assignment is the best choice still needs human review or blind tests against the samples.
+- A learned entry takes effect only after it is seen twice; a single sighting is just a candidate.
+- Risky operations (production, push, merge, deletes) always ask first.
 
-## 9. 常见问题
+## FAQ
 
-**Q：我已经会写锚点了，还会被转写吗？**
-A：不会。行首有锚点就按你写的执行。
+**I already write anchors. Will it rewrite mine?** No. A line-start anchor means it follows what you wrote.
 
-**Q：模型会不会把我的报错信息"润色"掉？**
-A：不会。报错原文、命令、路径、数字属于技术片段，逐字保留，测试里有专门断言。
+**Will it "polish" my error message?** No. Error text, commands, paths and numbers are technical fragments, kept verbatim and covered by dedicated assertions.
 
-**Q：它补的步骤我不想要怎么办？**
-A：所有代推项都单独标注，随附话会请你确认，直接否掉即可；纠错还能回写词库。
+**It added a step I don't want.** Every inferred item is labeled and the follow-up sentence asks you to confirm; just say no. Corrections can be written back to the lexicon.
 
-**Q：词库不够用？**
-A：用 `scripts/learn.py` 增补口水词、触发词、诊断动词，学习层与种子层隔离，不会污染原始词表。
+**The lexicon is missing a word.** Use `scripts/learn.py`; the learning layer is isolated from the seeds and guarded against pollution.
 
-## 10. 配套文件与测试
-
-```bash
-cd baihua-to-anchor
-python3 tests/test_transcribe.py   # 639 项
-python3 tests/test_learn.py        # 114 项
-```
-
-版本变更见 `SKILL.md` §17。
+Changelog: `SKILL.md` §17.
 
 ---
 
-v3.0.0 · 发布包 SHA-256：`a84d99a1aaf7fe126c73512f8dba502e7d4ebc430495f7998cc800365aca758a`
+<a id="简体中文"></a>
+
+## 简体中文
+
+**白话转锚点 v3.0.0**：用白话提工程任务，模型先把它转写成《符号指令解析规范 v5.2》锚点格式（一行一个意图），再按转写结果执行。
+
+- **不改原话**：只删词库里的口水词，其余一字不动。
+- **技术片段零损失**：代码、路径、URL、命令、报错原文、数字逐字保留。
+- **否定不丢不反转**："别重启""不要动数据库"一定保留原意。
+- **代推透明**：模型自己补的步骤或默认项全部单独标注，等你确认。
+
+**触发**：白话工程任务（排障、部署、配置、重构、脚本、开发）且行首没有锚点时自动触发；行首已有锚点不转写；首次转写后进入会话锁，说"好了/谢谢"解锁。
+
+**安装与测试**：把 `baihua-to-anchor/` 复制到 skill 库目录；`python3 tests/test_transcribe.py`（639 项）、`python3 tests/test_learn.py`（114 项），只需 Python 3。
+
+**能力边界**：只处理工程任务；校验器只查硬性不变量；学习词条出现 2 次才生效；风险操作先征询。完整规则见 `SKILL.md`，变更记录见 §17。
+
+---
+
+v3.0.0 · Release package SHA-256: `a84d99a1aaf7fe126c73512f8dba502e7d4ebc430495f7998cc800365aca758a`
