@@ -8,7 +8,7 @@
 - `lexicon.json`：词库（`schema_version=3`），只提供词表数据；每个键的含义见 `SKILL.md` §14。学习层在 `learned` 区。
 - `scripts/learn.py`：词库学习工具（add 口水词 / 触发词 / 锚点标记 / 诊断动词、correct / reject / remove / list / active / prune），带文件锁、版本校验、防污染与坏数据容错。
 - `tests/test_transcribe.py`：输出校验器 `validate(input_text, output_text, lexicon, context)` 加回归。
-- `tests/cases.jsonl`：合格样本（输入 + 合格输出，含 `SKILL.md` 全部示例、40 句盲测句、盲测 v3 的 30 句与盲测 v3b 的 20 句的正确产物、审计对抗输入）与故意错误的反例。
+- `tests/cases.txt`：合格样本（输入 + 合格输出，含 `SKILL.md` 全部示例、40 句盲测句、盲测 v3 的 30 句与盲测 v3b 的 20 句的正确产物、审计对抗输入）与故意错误的反例。
 - `tests/test_learn.py`：`learn.py` 回归，跑在临时词库副本上。
 
 ## 安装
