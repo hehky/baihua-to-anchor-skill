@@ -1,4 +1,4 @@
-# baihua-to-anchor · Plain Words to Anchors (v3.0.0)
+# baihua-to-anchor · Plain Words to Anchors (v3.1.0)
 
 [English](#english) · [简体中文](#简体中文)
 
@@ -128,7 +128,7 @@ Changelog: `SKILL.md` §17.
 
 ## 简体中文
 
-**白话转锚点 v3.0.0**：用白话提工程任务，模型先把它转写成《符号指令解析规范 v5.2》锚点格式（一行一个意图），再按转写结果执行。
+**白话转锚点 v3.1.0**：用白话提工程任务，模型先把它转写成《符号指令解析规范 v5.2》锚点格式（一行一个意图），再按转写结果执行。
 
 - **不改原话**：只删词库里的口水词，其余一字不动。
 - **技术片段零损失**：代码、路径、URL、命令、报错原文、数字逐字保留。
@@ -145,4 +145,4 @@ Changelog: `SKILL.md` §17.
 
 ---
 
-v3.0.0 · Release package SHA-256: `a84d99a1aaf7fe126c73512f8dba502e7d4ebc430495f7998cc800365aca758a`
+v3.1.0 · Release package SHA-256: `877fcd8a9edd76b9795b4d6f5e8e37ab3a3a2cd635fe4d0dad64e2c52ee323f9`
