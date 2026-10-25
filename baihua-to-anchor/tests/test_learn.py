@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-test_learn.py — baihua-to-anchor 3.0.0 learn.py 回归
+test_learn.py — baihua-to-anchor 3.1.0 learn.py 回归
 
 全部用例跑在临时词库副本上（BAIHUA_LEXICON），副本的学习层先清空，
 所以真实 lexicon.json 学到多少东西都不影响本测试；测试结束校验真实词库未被改动。
@@ -298,7 +298,7 @@ try:
         check("README 命令可跑: %s" % " ".join(argv[2:5]), r.returncode in (0, 2), r.stderr.strip())
 
     r = run("--version")
-    check("--version 输出 3.0.0", r.stdout.strip() == "3.0.0")
+    check("--version 输出 3.1.0", r.stdout.strip() == "3.1.0")
 finally:
     check("真实 lexicon.json 内容未被改动", REAL.read_bytes() == REAL_BYTES)
     check("真实 lexicon.json mtime 未被改动", REAL.stat().st_mtime_ns == REAL_MTIME)
