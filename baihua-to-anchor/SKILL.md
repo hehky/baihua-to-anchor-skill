@@ -57,7 +57,7 @@ allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion
 
 ## §2 总流程（7 步）
 
-1. **读词库**：加载 `lexicon.json`，`schema_version` 必须为 3，否则停手并告诉用户词库版本不符。生效的学习层词条并入对应种子词表一起用。
+1. **读词库**：先按 `lang/en.md` §1 选语言包（白话是中文用 `lexicon.json`，是英文用 `lang/lexicon.en.json`，规则不变、只换词表与字面记号，不翻译），加载对应词库，`schema_version` 必须为 3，否则停手并告诉用户词库版本不符。生效的学习层词条并入对应种子词表一起用。
 2. **判场景**：按 §3 决策链，第一条命中即停。结果是"不触发"或一个场景标签。
 3. **切子句、归锚点**：按 §6 的顺序给每个子句定唯一归属。
 4. **清洗**：只做 §8 允许的五种改写。
@@ -786,13 +786,16 @@ python3 <skill目录>/scripts/learn.py prune --min-count 2
 ```bash
 cd <skill目录>
 python3 tests/test_transcribe.py   # 输出校验器：合格样本全过、反例全红、本文件示例与词库一致
+python3 tests/test_transcribe_en.py  # 英文语言包：词库结构与中文一致、合格样本全过、反例全红、learn.py 英文可用
 python3 tests/test_learn.py        # learn.py：增删改查、防污染、淘汰、锁、权限、坏数据容错、本文件 §13.4 命令可跑
 ```
-`test_transcribe.py` 里的 `validate(input_text, output_text, lexicon, context)` 只检查可机检的硬性不变量（场景标签、锚点合法与行序、技术片段逐字保留、子句不丢、否定不丢不反转、默认项与代推标注、必填锚点、结算行格式、口水词残留、行首锚点输入不触发）。它不判断场景选得对不对、归属是否最优——那要靠人或盲测对照 `tests/cases.jsonl` 里的合格样本。当前：合格样本 245 条、反例 51 条、断言 639 项（`test_transcribe.py`）；`test_learn.py` 断言 114 项。
+`test_transcribe.py` 里的 `validate(input_text, output_text, lexicon, context)` 只检查可机检的硬性不变量（场景标签、锚点合法与行序、技术片段逐字保留、子句不丢、否定不丢不反转、默认项与代推标注、必填锚点、结算行格式、口水词残留、行首锚点输入不触发）。它不判断场景选得对不对、归属是否最优——那要靠人或盲测对照 `tests/cases.txt` 里的合格样本。当前：合格样本 245 条、反例 51 条、断言 639 项（`test_transcribe.py`）；`test_learn.py` 断言 114 项。
 
 ---
 
 ## §17 变更记录
+
+**多语言（2026-10-25，规则版本不变）** 新增英文语言包：`lang/en.md`（选包规则、字面记号对照、按词处理）、`lang/lexicon.en.json`（与中文词库同结构同内部 id）、`tests/validate_en.py` + `tests/cases_en.txt`（42 合格、25 反例）+ `tests/test_transcribe_en.py`；`learn.py` 防污染对纯拉丁文字改按词边界判断（`gonna` 不再因含 `go` 被拒），中文行为不变。新增语言照 `lang/en.md` §6。
 
 **3.0.0 第三轮修订（2026-10-19，版本号不变）** 按盲测 v3b 的 11 条问题修订：
 - `h:` 的命令判据：只有作为可执行命令原文出现（带真实子命令 / 参数、反引号或 shell 语法）才算命令不抄；「nginx reload」「跑 eslint」「pytest 报…」是单独点名，抄（S26、A03 随之补 `h:`）；格式名（Markdown、JSON、YAML、CSV、Excel）不抄；
@@ -812,7 +815,7 @@ python3 tests/test_learn.py        # learn.py：增删改查、防污染、淘�
 - 盲测 v3 的 30 句按修订后的规则收为合格样本（B01–B30），新增示例 16–18 与相应反例。
 
 **3.0.0（2026-10-19）** 重构为最终版：
-- 参考转写器废弃，`test_transcribe.py` 改为输出校验器；`cases.jsonl` 改为"输入 + 合格输出"样本加故意错误的反例；
+- 参考转写器废弃，`test_transcribe.py` 改为输出校验器；`cases.txt` 改为"输入 + 合格输出"样本加故意错误的反例；
 - 场景判定改为一条有序决策链（§3），"系统已坏"排在触发词与兜底规则之前；兜底规则只看动作子句，规则 4 限定代码对象并排除版本控制动作；补知识问答 / 选型不触发、退出短语、锁内换场景条件；
 - 症状词表补齐（卡在、502/5xx、timed out、被拒/rejected、点不动、匹配不上、泄漏、满了、连不上、闪退等），排障触发词与症状模式合并为 `symptoms`；排除词扩展到部署并取最长匹配；`报 + 英文` 的误判靠排除词（预报、海报…）收住；「了」「后」状态标记收窄；新增条件从句功能名判据；
 - 结束消息改为整子句比对（不再误把"还是不行了""务必今天搞定"当结束）；
