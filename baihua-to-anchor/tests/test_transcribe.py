@@ -6,7 +6,7 @@ test_transcribe.py — baihua-to-anchor 3.0.0 输出校验器 + 回归
 定位：SKILL.md 由模型执行，本文件不再实现转写。它提供
     validate(input_text, output_text, lexicon, context=None) -> [(code, msg), ...]
 只检查 SKILL.md 里可机检的硬性不变量；返回空列表即合格。它不判断场景选得对不对、
-子句归属是否最优——那些要靠人或盲测对照 tests/cases.jsonl 的合格样本。
+子句归属是否最优——那些要靠人或盲测对照 tests/cases.txt 的合格样本。
 
 错误码：
   E01 首行不是合法场景标签，也不是「不触发：理由」
@@ -36,7 +36,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TESTS = Path(__file__).resolve().parent
 LEXICON_PATH = ROOT / "lexicon.json"
-CASES_PATH = TESTS / "cases.jsonl"
+CASES_PATH = TESTS / "cases.txt"
 SKILL_PATH = ROOT / "SKILL.md"
 README_PATH = ROOT / "README.md"
 LEARN_PATH = ROOT / "scripts" / "learn.py"
@@ -526,7 +526,7 @@ def main():
 
     cases = [json.loads(l) for l in CASES_PATH.read_text(encoding="utf-8").splitlines() if l.strip()]
     ids = [c["id"] for c in cases]
-    check("cases.jsonl 的 id 唯一", len(ids) == len(set(ids)))
+    check("cases.txt 的 id 唯一", len(ids) == len(set(ids)))
     pos = [c for c in cases if c["kind"] == "positive"]
     neg = [c for c in cases if c["kind"] == "negative"]
 
@@ -548,7 +548,7 @@ def main():
     for i, ex in enumerate(examples, 1):
         e = validate(ex["input"], ex["output"], lex, ex["context"])
         check("SKILL.md 示例块 %d 通过校验" % i, not e, "; ".join("%s %s" % x for x in e))
-        check("SKILL.md 示例块 %d 收录于 cases.jsonl" % i, (ex["input"], ex["output"].strip("\n")) in pairs)
+        check("SKILL.md 示例块 %d 收录于 cases.txt" % i, (ex["input"], ex["output"].strip("\n")) in pairs)
 
     # ---- 文档与词库一致
     missing = [w for w in lexicon_strings(real) if w not in skill]
