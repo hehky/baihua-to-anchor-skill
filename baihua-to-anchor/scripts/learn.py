@@ -86,6 +86,19 @@ def key(text):
     return norm(text).casefold()
 
 
+def has_cjk(text):
+    return any("\u4e00" <= ch <= "\u9fff" for ch in text)
+
+
+def inside(small, big):
+    """small 是否作为整体出现在 big 里：含汉字按子串；纯拉丁文字按词边界（gonna 不含 go）。"""
+    if not small:
+        return False
+    if has_cjk(small) or has_cjk(big):
+        return small in big
+    return re.search(r"(?<![0-9a-z_])" + re.escape(small) + r"(?![0-9a-z_])", big) is not None
+
+
 def check_text(text, what="词条文本"):
     if not text:
         fail("%s为空" % what)
@@ -286,9 +299,9 @@ def guard_add(lexicon, kind, text, attr):
                 continue
             if k == w:
                 return "「%s」是有信息量的词，学成口水词会把事实删掉" % text
-            if w in k:
+            if inside(w, k):
                 return "「%s」包含信息词「%s」，学成口水词会把事实删掉" % (text, w)
-            if k in w:
+            if inside(k, w):
                 return "「%s」是信息词「%s」的一部分，按字面删除会破坏事实" % (text, w)
         return None
     if k in coll:
@@ -305,7 +318,7 @@ def guard_add(lexicon, kind, text, attr):
         if k in same:
             raise Skip("「%s」已在种子层 %s 触发词" % (text, attr))
         for w in same:
-            if w and w in k:
+            if w and inside(w, k):
                 raise Skip("「%s」已含 %s 的种子触发词「%s」，视为重复" % (text, attr, w))
         for sc in lexicon["scenes"]:
             if sc != attr and k in seed_triggers(lexicon, sc):
