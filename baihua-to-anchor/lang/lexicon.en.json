@@ -1,0 +1,677 @@
+{
+  "schema_version": 3,
+  "lang": "en",
+  "updated_at": "2026-10-25T13:40:00+08:00",
+  "active_min_count": 2,
+  "scene_priority": [
+    "排障",
+    "部署",
+    "配置",
+    "重构",
+    "脚本",
+    "开发"
+  ],
+  "scenes": {
+    "排障": {
+      "label": "/debug",
+      "triggers": [],
+      "required": [
+        "z:"
+      ],
+      "default_i": "problem gone, feature works normally again",
+      "default_y": "don't touch unrelated code or config"
+    },
+    "部署": {
+      "label": "/deploy",
+      "triggers": [
+        "deploy",
+        "release",
+        "ship",
+        "roll out",
+        "go live",
+        "set up the environment",
+        "upgrade"
+      ],
+      "required": [],
+      "default_i": "deployed and reachable"
+    },
+    "配置": {
+      "label": "/config",
+      "triggers": [
+        "change the config",
+        "configure",
+        "toggle",
+        "turn on",
+        "turn off",
+        "add a parameter",
+        "config option",
+        "env var"
+      ],
+      "required": [
+        "y:"
+      ],
+      "default_i": "config takes effect as described",
+      "default_y": "don't touch unrelated config entries"
+    },
+    "重构": {
+      "label": "/refactor",
+      "triggers": [
+        "refactor",
+        "optimize",
+        "split",
+        "clean up the code",
+        "tidy up",
+        "decouple",
+        "rewrite",
+        "speed up"
+      ],
+      "required": [
+        "y:"
+      ],
+      "default_i": "improved as described, external behavior unchanged",
+      "default_y": "external behavior unchanged"
+    },
+    "脚本": {
+      "label": "/script",
+      "triggers": [
+        "script",
+        "batch",
+        "automate",
+        "data conversion",
+        "cron job",
+        "crontab"
+      ],
+      "required": [],
+      "default_i": "script runs and completes the target processing",
+      "default_i_ops": "operation done, nothing outside the scope affected"
+    },
+    "开发": {
+      "label": "/dev",
+      "triggers": [
+        "write a",
+        "implement",
+        "add a",
+        "add an",
+        "build a",
+        "create a",
+        "make a",
+        "develop",
+        "support",
+        "design",
+        "set up a"
+      ],
+      "required": [],
+      "default_i": "implemented as described and runnable"
+    }
+  },
+  "scene_exclusions": {
+    "排障": [
+      "weekly report",
+      "daily report",
+      "monthly report",
+      "error rate",
+      "failure rate",
+      "timeout rate",
+      "retry on failure",
+      "have a question",
+      "quick question",
+      "bug report template"
+    ],
+    "部署": [
+      "publish-subscribe",
+      "pub/sub",
+      "publisher",
+      "upgrade prompt",
+      "upgrade popup"
+    ]
+  },
+  "symptoms": {
+    "words": [
+      "error",
+      "errors out",
+      "throws",
+      "crash",
+      "crashes",
+      "crashed",
+      "blank screen",
+      "white screen",
+      "stuck",
+      "hangs",
+      "freezes",
+      "frozen",
+      "down",
+      "won't start",
+      "doesn't start",
+      "can't start",
+      "won't run",
+      "won't open",
+      "can't open",
+      "can't access",
+      "can't connect",
+      "connection timed out",
+      "can't log in",
+      "unresponsive",
+      "doesn't respond",
+      "doesn't match",
+      "not working",
+      "doesn't work",
+      "isn't working",
+      "stopped working",
+      "no effect",
+      "not taking effect",
+      "broken",
+      "fails",
+      "failed",
+      "failing",
+      "rejected",
+      "refused",
+      "denied",
+      "leak",
+      "leaking",
+      "unavailable",
+      "garbled",
+      "infinite loop",
+      "bug",
+      "exception",
+      "traceback",
+      "timed out",
+      "panic",
+      "segmentation fault",
+      "out of memory"
+    ],
+    "patterns": [
+      "[A-Za-z]*(Error|Exception)\\b",
+      "\\b(ERROR|Error|error)\\s*:",
+      "\\b(keeps|always|still|again|sometimes|suddenly)\\s+(returning|returns|getting|gets|throwing|throws)\\s+[45]\\d{2}(?!\\d)",
+      "\\breturns?\\s+[45]\\d{2}(?!\\d)",
+      "\\b[45]\\d{2}\\s*(Bad Gateway|Gateway Timeout|Internal Server Error|Service Unavailable|Not Found|Forbidden|Unauthorized)",
+      "\\b(still|again|always|now|suddenly|every time)\\s+(not working|wrong|times out|timing out|inconsistent|full)",
+      "\\b(error rate|failure rate|timeout rate)\\s+(spiked|spiking|jumped|rising|soared)"
+    ]
+  },
+  "feature_name_rule": {
+    "repair_verbs": [
+      "fix",
+      "fix up",
+      "repair",
+      "resolve",
+      "troubleshoot",
+      "pin down",
+      "get rid of"
+    ],
+    "diagnose_verbs": [
+      "take a look at",
+      "have a look at",
+      "look at",
+      "look into",
+      "check",
+      "check out",
+      "investigate",
+      "analyze",
+      "dig into",
+      "see why",
+      "see what's wrong"
+    ],
+    "state_markers": [
+      "always",
+      "keeps",
+      "still",
+      "suddenly",
+      "again",
+      "now",
+      "every time",
+      "sometimes",
+      "often",
+      "from time to time"
+    ],
+    "state_suffix": "",
+    "after_verb_pattern": "\\bafter\\s+(going live|deploying|releasing|upgrading|updating|restarting|installing|changing|merging|switching|migrating|committing|packaging|compiling|building|adding\\s+\\S+)",
+    "conditional_markers": [
+      "when",
+      "whenever",
+      "if",
+      "once",
+      "as soon as",
+      "then"
+    ]
+  },
+  "bad_smells": [
+    "too long",
+    "too messy",
+    "too slow",
+    "too laggy",
+    "too big",
+    "too complex",
+    "too many",
+    "duplicated code",
+    "hard to read",
+    "hard to maintain",
+    "gives me a headache",
+    "headache"
+  ],
+  "scene_fallback": {
+    "rules": [
+      {
+        "scene": "配置",
+        "pattern": "\\b(config|configuration|parameter|flag|switch|env var|environment variable)s?\\b",
+        "learnable": false
+      },
+      {
+        "scene": "配置",
+        "pattern": "(\\.(ya?ml|json|toml|ini|conf|cfg|properties)|\\.env|settings\\.py|config\\.py|\\.config\\.[cm]?[jt]s)\\b.*\\b(change to|set to|set it to|add|remove|delete|drop)\\b",
+        "learnable": false
+      },
+      {
+        "scene": "配置",
+        "pattern": "\\b(change|set|bump|lower|raise)\\b.{0,30}\\bto\\s*\\d",
+        "learnable": false
+      },
+      {
+        "scene": "重构",
+        "pattern": "\\b(split (up|into|out)|break (up|apart|into)|merge into|extract (out|into)?|pull out)\\b",
+        "learnable": true,
+        "requires": "\\.[A-Za-z]{1,5}\\b|\\b[A-Z][a-z0-9]+(?:[A-Z][a-z0-9]*)+\\b|\\b(function|method|class|module|file|component|code|endpoint|middleware)s?\\b",
+        "exclude": "\\b(branch|main|master|release|tag|PR|MR|commit|git|repo|repository)\\b"
+      }
+    ],
+    "default": "开发"
+  },
+  "knowledge_question": [
+    "what is",
+    "what's the difference",
+    "what are",
+    "difference between",
+    "which is better",
+    "which one should",
+    "how to choose",
+    "how does",
+    "pros and cons",
+    "is it worth",
+    "should i use",
+    "explain"
+  ],
+  "opt_out": [
+    "just do it",
+    "don't transcribe",
+    "no need to transcribe",
+    "skip the anchors",
+    "no anchors",
+    "skip the format",
+    "don't format it"
+  ],
+  "session": {
+    "end_phrases": [
+      "done",
+      "that's it",
+      "all good",
+      "that works",
+      "fixed",
+      "finished",
+      "no need",
+      "never mind",
+      "we're good",
+      "ok that's all",
+      "ok done"
+    ],
+    "end_verb_pattern": "^(it's |all )?(fixed|done|working|good)( now)?[.!]?$",
+    "append_markers": [
+      "also",
+      "by the way",
+      "btw",
+      "and also",
+      "one more thing"
+    ]
+  },
+  "imperatives": [
+    "try again",
+    "retry",
+    "try once more",
+    "run it again",
+    "rerun",
+    "re-run",
+    "run once more",
+    "continue",
+    "keep going"
+  ],
+  "risk_actions": [
+    "production",
+    "prod",
+    "live data",
+    "production database",
+    "git push",
+    "push to remote",
+    "force push",
+    "force",
+    "merge.{0,12}branch",
+    "branch.{0,12}merge",
+    "merge",
+    "delete",
+    "remove",
+    "wipe",
+    "clear out",
+    "rm -rf",
+    "drop",
+    "truncate"
+  ],
+  "colloquial": {
+    "问候语": [
+      "hi",
+      "hello",
+      "hey",
+      "hey there",
+      "good morning"
+    ],
+    "客套": [
+      "please",
+      "pls",
+      "plz",
+      "thanks",
+      "thank you",
+      "thanks a lot",
+      "much appreciated",
+      "sorry to bother"
+    ],
+    "托付套话": [
+      "help me",
+      "can you help me",
+      "could you help me",
+      "can you",
+      "could you",
+      "would you",
+      "you could",
+      "i need you to",
+      "i want you to",
+      "i'd like you to",
+      "help me deal with this",
+      "help me sort this out"
+    ],
+    "填充词": [
+      "so",
+      "basically",
+      "actually",
+      "like",
+      "um",
+      "uh",
+      "you know",
+      "i mean",
+      "anyway",
+      "here's what i need",
+      "requirements:"
+    ],
+    "弱化动词": [
+      "sort out",
+      "sort it out",
+      "deal with it",
+      "deal with this",
+      "handle it",
+      "take care of it",
+      "do something about it",
+      "mess with it"
+    ],
+    "委婉句式": [
+      "is it possible to",
+      "would it be possible to",
+      "any chance you could",
+      "maybe"
+    ],
+    "语气词": [
+      "lol",
+      "haha",
+      "ok",
+      "okay"
+    ]
+  },
+  "deletion_context": {
+    "hi": "^\\s*[Hh]i\\b",
+    "hello": "^\\s*[Hh]ello\\b",
+    "hey": "^\\s*[Hh]ey\\b(?! there)",
+    "hey there": "^\\s*[Hh]ey there\\b",
+    "good morning": "^\\s*[Gg]ood morning\\b",
+    "please": "\\b[Pp]lease\\b(?!\\s*(note|wait|see|confirm)\\b)",
+    "so": "(?:^|(?<=[,.;!?] ))[Ss]o\\b(?=,|\\s+(i|we|my|the|it|this|that|our)\\b)",
+    "like": "(?<=, )like(?=,)",
+    "actually": "(?:^|(?<=[,.;!?] ))[Aa]ctually\\b",
+    "basically": "(?:^|(?<=[,.;!?] ))[Bb]asically\\b",
+    "anyway": "(?:^|(?<=[,.;!?] ))[Aa]nyway\\b",
+    "um": "\\b[Uu]m\\b",
+    "uh": "\\b[Uu]h\\b",
+    "you know": "(?<=, )you know(?=,)",
+    "i mean": "(?:^|(?<=[,.;!?] ))[Ii] mean\\b",
+    "ok": "(?:^|(?<=[,.;!?] ))[Oo][Kk](?=$|[,.;!?])",
+    "okay": "(?:^|(?<=[,.;!?] ))[Oo]kay(?=$|[,.;!?])",
+    "lol": "\\blol\\b",
+    "haha": "\\bhaha\\b",
+    "maybe": "(?:^|(?<=[,.;!?] ))[Mm]aybe(?=\\s+(you|just|try)\\b)",
+    "can you": "\\b[Cc]an you(?=\\s+(please\\s+)?(help|fix|check|look|take|write|add|make|split|deploy|change|set|run|sort|deal|handle|refactor|clean|update|remove|delete|create|build|implement|figure|tell|get|see|restart|move|convert|translate|optimize|merge|investigate|debug|rename|migrate|upgrade|speed|generate|turn)\\b)",
+    "could you": "\\b[Cc]ould you(?=\\s+(please\\s+)?(help|fix|check|look|take|write|add|make|split|deploy|change|set|run|sort|deal|handle|refactor|clean|update|remove|delete|create|build|implement|figure|tell|get|see|restart|move|convert|translate|optimize|merge|investigate|debug|rename|migrate|upgrade|speed|generate|turn)\\b)",
+    "would you": "\\b[Ww]ould you(?=\\s+(please\\s+)?(help|fix|check|look|take|write|add|make|split|deploy|change|set|run|sort|deal|handle|refactor|clean|update|remove|delete|create|build|implement|figure|tell|get|see|restart|move|convert|translate|optimize|merge|investigate|debug|rename|migrate|upgrade|speed|generate|turn)\\b)",
+    "is it possible to": "\\b[Ii]s it possible to(?=\\s+\\w)",
+    "would it be possible to": "\\b[Ww]ould it be possible to(?=\\s+\\w)",
+    "you could": "\\b(?:[Mm]aybe )?[Yy]ou could(?=\\s+(help|fix|check|look|take|write|add|make|split|deploy|change|set|run|sort|deal|handle|refactor|clean|update|remove|delete|create|build|implement|figure|tell|get|see|restart|move|convert|translate|optimize|merge|investigate|debug|rename|migrate|upgrade|speed|generate|turn|optimize)\\b)",
+    "help me": "\\b[Hh]elp me(?=\\s+(help|fix|check|look|take|write|add|make|split|deploy|change|set|run|sort|deal|handle|refactor|clean|update|remove|delete|create|build|implement|figure|tell|get|see|restart|move|convert|translate|optimize|merge|investigate|debug|rename|migrate|upgrade|speed|generate|turn)\\b)"
+  },
+  "weak_verb_replace": {
+    "get rid of it": "remove it"
+  },
+  "clause_connectives": [
+    "and",
+    "but",
+    "while",
+    "whereas"
+  ],
+  "time_words": {
+    "filler_when_alone": [
+      "then"
+    ],
+    "step_markers": [
+      "first",
+      "then",
+      "next",
+      "after that",
+      "afterwards",
+      "finally"
+    ]
+  },
+  "negation": {
+    "normalize_to": "don't",
+    "normalize": [
+      "absolutely don't",
+      "absolutely do not",
+      "definitely don't",
+      "never ever",
+      "do not"
+    ],
+    "keep": [
+      "can't",
+      "cannot",
+      "must not",
+      "mustn't",
+      "never",
+      "no more than",
+      "not",
+      "without",
+      "shouldn't",
+      "won't",
+      "no need to",
+      "don't need to",
+      "don't"
+    ],
+    "protect": [
+      "not only",
+      "no-op",
+      "nonetheless",
+      "nothing else",
+      "notification",
+      "note"
+    ]
+  },
+  "anchor_patterns": {
+    "i:": [
+      "i want it to",
+      "i'd like it to",
+      "hoping it can",
+      "the goal is",
+      "make it able to",
+      "should be able to"
+    ],
+    "o:": [
+      "give me a",
+      "give me an",
+      "i need a",
+      "i need an",
+      "send me a",
+      "get me a"
+    ],
+    "h:": [
+      "Python",
+      "Go",
+      "Java",
+      "JavaScript",
+      "TypeScript",
+      "Node",
+      "Node.js",
+      "Rust",
+      "C++",
+      "PHP",
+      "Ruby",
+      "Bash",
+      "Shell",
+      "React",
+      "Vue",
+      "Angular",
+      "Django",
+      "Flask",
+      "Spring",
+      "Docker",
+      "k8s",
+      "Kubernetes",
+      "nginx",
+      "Apache",
+      "Redis",
+      "Memcached",
+      "MySQL",
+      "PostgreSQL",
+      "MongoDB",
+      "Kafka",
+      "Linux",
+      "Ubuntu",
+      "CentOS",
+      "macOS",
+      "Windows",
+      "iOS",
+      "Android",
+      "Safari",
+      "Chrome"
+    ],
+    "y:": [
+      "don't touch",
+      "don't change",
+      "don't modify",
+      "don't break",
+      "don't delete",
+      "don't remove",
+      "don't overwrite",
+      "never",
+      "must",
+      "must not",
+      "make sure",
+      "has to",
+      "no more than",
+      "not more than",
+      "at least",
+      "at most",
+      "only"
+    ],
+    "q:": [
+      "absolutely must",
+      "need it today",
+      "by today",
+      "today",
+      "asap",
+      "right away",
+      "as soon as possible",
+      "urgent"
+    ],
+    "j:": [
+      "code only",
+      "just the code",
+      "no explanation",
+      "don't explain",
+      "skip the explanation",
+      "just give me the command",
+      "commands only",
+      "no fluff",
+      "just the diff",
+      "diff only"
+    ]
+  },
+  "content_nouns": [
+    "file",
+    "directory",
+    "folder",
+    "endpoint",
+    "api",
+    "function",
+    "method",
+    "code",
+    "data",
+    "database",
+    "config",
+    "service",
+    "page",
+    "script",
+    "test",
+    "tests",
+    "log",
+    "logs",
+    "port",
+    "module",
+    "component",
+    "parameter",
+    "user",
+    "button",
+    "cache",
+    "table",
+    "field",
+    "column",
+    "environment",
+    "version",
+    "dependency",
+    "image",
+    "container",
+    "branch",
+    "request",
+    "error",
+    "exception"
+  ],
+  "generic_words": [
+    "error",
+    "issue",
+    "problem",
+    "broken",
+    "wrong",
+    "slow",
+    "stuck",
+    "down",
+    "bug",
+    "fail",
+    "bad",
+    "not working"
+  ],
+  "default_tags": {
+    "y:": " (default, removable)",
+    "i:": " (default)"
+  },
+  "infer_tags": {
+    "排障": " (inferred: from symptom)",
+    "其他": " (inferred: from i:)"
+  },
+  "learned": {
+    "colloquial": [],
+    "scene_triggers": [],
+    "anchor_patterns": [],
+    "diagnose_verbs": [],
+    "corrections": [],
+    "rejected": []
+  }
+}
