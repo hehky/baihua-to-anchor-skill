@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-learn.py — baihua-to-anchor 3.0.0 词库学习工具
+learn.py — baihua-to-anchor 3.1.0 词库学习工具
 
 子命令：
   add colloquial     --text T --category 类别 [--source S]
@@ -31,7 +31,7 @@ import unicodedata
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-VERSION = "3.0.0"
+VERSION = "3.1.0"
 SCHEMA_VERSION = 3
 DEFAULT_LEXICON = Path(__file__).resolve().parent.parent / "lexicon.json"
 LEXICON_PATH = Path(os.environ.get("BAIHUA_LEXICON") or DEFAULT_LEXICON).resolve()
