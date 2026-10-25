@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-test_transcribe.py — baihua-to-anchor 3.0.0 输出校验器 + 回归
+test_transcribe.py — baihua-to-anchor 3.1.0 输出校验器 + 回归
 
 定位：SKILL.md 由模型执行，本文件不再实现转写。它提供
     validate(input_text, output_text, lexicon, context=None) -> [(code, msg), ...]
@@ -562,7 +562,7 @@ def main():
     ver = re.search(r"^version: (\S+)$", skill, re.M).group(1)
     readme = README_PATH.read_text(encoding="utf-8")
     learn_src = LEARN_PATH.read_text(encoding="utf-8")
-    check("SKILL.md 版本为 3.0.0", ver == "3.0.0")
+    check("SKILL.md 版本为 3.1.0", ver == "3.1.0")
     check("README 标题版本与 SKILL.md 一致", readme.splitlines()[0].endswith(ver))
     check("learn.py VERSION 与 SKILL.md 一致", 'VERSION = "%s"' % ver in learn_src)
     desc = re.search(r"^description: (.+)$", skill, re.M).group(1)
