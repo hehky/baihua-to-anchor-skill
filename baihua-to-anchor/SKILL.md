@@ -1,12 +1,12 @@
 ---
 name: baihua-to-anchor
-version: 3.0.0
+version: 3.1.0
 description: 用户用白话（行首无锚点）提工程任务时，先按本文件把白话转写成《符号指令解析规范 v5.2》锚点格式、标出代推项，再按转写结果执行。
 description_zh: 工程任务白话转锚点格式
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash, AskUserQuestion
 ---
 
-# 白话转锚点 v3.0.0
+# 白话转锚点 v3.1.0
 
 本文件是唯一规则。你（模型）读完后亲自执行：判场景 → 切子句 → 归锚点 → 清洗 → 补默认与代推 → 自查 → 输出 → 执行。词库 `lexicon.json` 与本文件同目录，只提供词表数据；词表的含义与用法全部以本文件为准。转写的本质是**删掉没有信息量的词，其余一字不改**，不替用户做决定。
 
@@ -795,7 +795,7 @@ python3 tests/test_learn.py        # learn.py：增删改查、防污染、淘�
 
 ## §17 变更记录
 
-**多语言（2026-10-25，规则版本不变）** 新增英文语言包：`lang/en.md`（选包规则、字面记号对照、按词处理）、`lang/lexicon.en.json`（与中文词库同结构同内部 id）、`tests/validate_en.py` + `tests/cases_en.txt`（42 合格、25 反例）+ `tests/test_transcribe_en.py`；`learn.py` 防污染对纯拉丁文字改按词边界判断（`gonna` 不再因含 `go` 被拒），中文行为不变。新增语言照 `lang/en.md` §6。
+**3.1.0 多语言（2026-10-25，转写规则不变）** 新增英文语言包：`lang/en.md`（选包规则、字面记号对照、按词处理）、`lang/lexicon.en.json`（与中文词库同结构同内部 id）、`tests/validate_en.py` + `tests/cases_en.txt`（42 合格、25 反例）+ `tests/test_transcribe_en.py`；`learn.py` 防污染对纯拉丁文字改按词边界判断（`gonna` 不再因含 `go` 被拒），中文行为不变。新增语言照 `lang/en.md` §6。
 
 **3.0.0 第三轮修订（2026-10-19，版本号不变）** 按盲测 v3b 的 11 条问题修订：
 - `h:` 的命令判据：只有作为可执行命令原文出现（带真实子命令 / 参数、反引号或 shell 语法）才算命令不抄；「nginx reload」「跑 eslint」「pytest 报…」是单独点名，抄（S26、A03 随之补 `h:`）；格式名（Markdown、JSON、YAML、CSV、Excel）不抄；
