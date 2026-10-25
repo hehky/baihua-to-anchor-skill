@@ -17,7 +17,7 @@ baihua-to-anchor is a Skill. You keep talking normally; the model first transcri
 - **Negations never dropped or flipped**: "don't restart" and "never touch the database" always survive.
 - **Transparent inference**: every step or default the model added on its own is labeled and waits for your confirmation.
 
-> Current version processes requests written in Chinese. The rules themselves are language-independent.
+> **Languages: Chinese and English.** One shared rule set; the input's language picks a language pack (`lang/`). No translation step: anchor letters and internal scene IDs never change, your original words, code, paths and commands stay verbatim, and only labels, templates and the follow-up sentence are localized. English scene tags: `/debug` `/deploy` `/config` `/refactor` `/script` `/dev`.
 
 ## When it triggers
 
@@ -50,7 +50,7 @@ baihua-to-anchor is a Skill. You keep talking normally; the model first transcri
 
 Fixed order: `/scene → z → i → x → o → h → y → q → j`. Empty anchors are omitted.
 
-**Example** — input: `npm run dev 报 port 3000 already in use，帮我搞一下` ("npm run dev says port 3000 already in use, sort it out")
+**Example (Chinese input)** — input: `npm run dev 报 port 3000 already in use，帮我搞一下` ("npm run dev says port 3000 already in use, sort it out")
 
 ```
 /排障
@@ -74,12 +74,17 @@ The error text is kept verbatim, the filler "帮我搞一下" is gone, and the i
 baihua-to-anchor/
 ├── SKILL.md              The single rule set (17 sections: principles, glossary, scene chain, anchor rules, 22 examples, self-check, learning…)
 ├── lexicon.json          Lexicon (schema_version=3): seed layer + learning layer
-├── scripts/learn.py      Lexicon tool: add / correct / reject / remove / list / active / prune
+├── lang/en.md            English language pack: selection rules, output markers, word-level handling
+├── lang/lexicon.en.json  English lexicon (schema_version=3, same structure and scene IDs)
+├── scripts/learn.py      Lexicon tool: add / correct / reject / remove / list / active / prune (whole-word matching for English)
 ├── README.md             In-package notes
 └── tests/
     ├── test_transcribe.py  Output validator + regression (639 assertions)
     ├── test_learn.py       learn.py regression (114 assertions)
-    └── cases.txt           245 passing samples + 51 deliberately broken counter-examples
+    ├── cases.txt           245 passing samples + 51 deliberately broken counter-examples
+    ├── validate_en.py      English output validator
+    ├── test_transcribe_en.py  English pack regression (244 assertions)
+    └── cases_en.txt        42 English passing samples + 25 counter-examples
 ```
 
 ## Install & run
@@ -93,6 +98,7 @@ baihua-to-anchor/
   cd baihua-to-anchor
   python3 tests/test_transcribe.py   # 639 assertions
   python3 tests/test_learn.py        # 114 assertions
+  python3 tests/test_transcribe_en.py # 244 assertions
   python3 scripts/learn.py add colloquial --text "劳驾" --category 客套
   python3 scripts/learn.py active
   ```
@@ -131,7 +137,9 @@ Changelog: `SKILL.md` §17.
 
 **触发**：白话工程任务（排障、部署、配置、重构、脚本、开发）且行首没有锚点时自动触发；行首已有锚点不转写；首次转写后进入会话锁，说"好了/谢谢"解锁。
 
-**安装与测试**：把 `baihua-to-anchor/` 复制到 skill 库目录；`python3 tests/test_transcribe.py`（639 项）、`python3 tests/test_learn.py`（114 项），只需 Python 3。
+**多语言**：支持中文、英文；规则一份，按输入语言选语言包（`lang/`），不走翻译，锚点字母与场景 ID 不变，原话与技术片段原样保留。
+
+**安装与测试**：把 `baihua-to-anchor/` 复制到 skill 库目录；`python3 tests/test_transcribe.py`（639 项）、`python3 tests/test_learn.py`（114 项）、`python3 tests/test_transcribe_en.py`（244 项），只需 Python 3。
 
 **能力边界**：只处理工程任务；校验器只查硬性不变量；学习词条出现 2 次才生效；风险操作先征询。完整规则见 `SKILL.md`，变更记录见 §17。
 
